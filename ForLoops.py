@@ -1,2 +1,9 @@
-for item in ["rafa", 'teste']:
-    print(item)
+# for item in range(2, 11, 2):
+#     print(item)
+
+prices = [10,20,30]
+
+total = 0
+for price in prices:
+    total += price
+print(total)

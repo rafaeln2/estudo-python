@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cbb5d2ce-68a1-4c52-9083-24697ee801cf" name="Changes" comment="Pratica">
-      <change afterPath="$PROJECT_DIR$/Exercicios/CarGame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ForLoops.py" beforeDir="false" afterPath="$PROJECT_DIR$/ForLoops.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +37,7 @@
     "Python.CarGame.executor": "Run",
     "Python.ComparisonOperator.executor": "Run",
     "Python.ConversorDePeso.executor": "Run",
+    "Python.ForLoops.executor": "Run",
     "Python.FormatStrings.executor": "Run",
     "Python.GuessingGame.executor": "Run",
     "Python.IfStatement.executor": "Run",
@@ -110,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743380864906</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Pratica">
+      <option name="closed" value="true" />
+      <created>1743424889290</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743424889290</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
