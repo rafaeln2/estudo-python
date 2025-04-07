@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Insert,Float, ForeignKey
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Insert,Float, ForeignKey, func
 
 # DB_HOST = "localhost"
 # DB_NAME = "estudo-database"
@@ -34,63 +34,103 @@ meta.create_all(engine)
 
 conn = engine.connect()
 
-# # Insert data
-# # insert_statement = people.insert().values(name="John Doe", age=30)
-# insert_statement = Insert(people).values(name="John Doe", age=30)
-# result = conn.execute(insert_statement)
-# conn.commit()
-# print(f"Inserted row ID: {result.inserted_primary_key}")
+# Insert data
+def insert_data(conn, users):
+    # insert_statement = people.insert().values(name="John Doe", age=30)
+    insert_statement = Insert(users).values(name="John Doe", age=30)
+    result = conn.execute(insert_statement)
+    conn.commit()
+    print(f"Inserted row ID: {result.inserted_primary_key}")
+
+# insert_data(conn)
 
 
 #update data
-update_statement = users.update().where(users.c.id == 1).values(age=25)
-update_result = conn.execute(update_statement)
-conn.commit()
+def update_data(users, conn):
+    update_statement = users.update().where(users.c.id == 1).values(age=25)
+    update_result = conn.execute(update_statement)
+    conn.commit()
+
+# update_data(users, conn)
 
 
 #select
-# select_statement = people.select
-# select_result = conn.execute(select_statement())
-# for row in select_result.fetchall():
-#     print(row)
+def select_users(users, conn):
+    select_statement = users.select
+    select_result = conn.execute(select_statement())
+    for row in select_result.fetchall():
+        print(row)
+
+# select_users(users, conn)
     
 #delete
-delete_statement = users.delete().where(users.c.age == 25)
-delete_result = conn.execute(delete_statement)
-conn.commit()
+def delete_users_by_age(users, age, conn):
+    delete_statement = users.delete().where(users.c.age == age)
+    delete_result = conn.execute(delete_statement)
+    conn.commit()
 
-select_statement = users.select
-select_result = conn.execute(select_statement)
-for row in select_result.fetchall():
-    print(row)
+# delete_users_by_age(users, conn)
 
-# select_all = conn.execute(people.select()).fetchall()
-# for row in select_all:
-#     select_all(row)
 
 # Insert data with fk
-insert_statement = Insert(things).values(description="Sample Thing", value=10.5, user_id=2)
-result = conn.execute(insert_statement)
-conn.commit()
-select_statement = users.select().where(users.c.id == 2)
-select_result = conn.execute(select_statement)
-for row in select_result.fetchall():
-    print(row)
+def insert_things(users, things, conn):
+    insert_statement = Insert(things).values(description="Sample Thing", value=10.5, user_id=2)
+    result = conn.execute(insert_statement)
+    conn.commit()
+    select_statement = users.select().where(users.c.id == 2)
+    select_result = conn.execute(select_statement)
+    for row in select_result.fetchall():
+        print(row)
+
+# insert_things(users, things, conn)
 
 # insert list of data
-insert_people = users.insert().values([
+def insert_users_and_things(users, things):
+    insert_people = users.insert().values([
     {"name": "Alice", "age": 28},
     {"name": "Bob", "age": 35},
     {"name": "Charlie", "age": 22},
 ])  
-insert_things = things.insert().values([
+    insert_things = things.insert().values([
     {"description": "Thing 1", "value": 15.0, "user_id": 4},
     {"description": "Thing 2", "value": 25.0, "user_id": 2},
     {"description": "Thing 3", "value": 35.0, "user_id": 3},
 ])
-result = conn.execute(insert_people)
-conn.commit()
-select_statement = users.select()
-select_result = conn.execute(select_statement)
-for row in select_result.fetchall():
-    print(row)
+    
+    return insert_things,insert_people
+
+# insert_things, insert_people = insert_users_and_things(users, things)
+# conn.execute(insert_people)
+# conn.commit()
+# conn.execute(insert_things)
+# conn.commit()
+
+# delete_statement = things.delete()
+# delete_result = conn.execute(delete_statement)
+# conn.commit()
+
+
+# select_statement = users.select()
+# select_result = conn.execute(select_statement)
+# select_things = conn.execute(things.select())
+# for row in select_result.fetchall():
+#     print(row)
+# for row in select_things.fetchall():
+#     print(row)
+    
+#     select_statement = users.select
+#     select_result = conn.execute(select_statement())
+#     for row in select_result.fetchall():
+#         print(row)
+
+# join_statement = users.join(things, users.c.id == things.c.user_id)
+# select_statement = users.select().with_only_columns(users.c.name, things.c.description).select_from(join_statement)
+# join_result = conn.execute(select_statement)
+# for row in join_result.fetchall():
+#     print(row)
+
+# join_statement = users.join(things, users.c.id == things.c.user_id)
+# group_by_statement = things.select().with_only_columns(things.c.user_id, users.c.name, func.sum(things.c.value)).select_from(join_statement).group_by(things.c.user_id).having(func.sum(things.c.value) > 20)
+# result = conn.execute(group_by_statement)
+# for row in result.fetchall():
+#     print(row)
