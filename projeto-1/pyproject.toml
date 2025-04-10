@@ -1,0 +1,25 @@
+[project]
+name = "projeto-1"
+version = "0.1.0"
+description = "Projeto de pratica e estudo python e tecnlogias"
+authors = [
+    {name = "RafaelN",email = "rafaeln_nascimento@hotmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "pydantic (>=2.11.3,<3.0.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "sqlalchemy (>=2.0.40,<3.0.0)",
+    "psycopg2 (>=2.9.10,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+alembic = "^1.15.2"
+
