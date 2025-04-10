@@ -2,11 +2,11 @@ from config.session import get_db
 from config.engine import engine
 from config.base import Base
 from models import Usuario, Curso, usuario_curso
-from crud import UsuarioCRUD, CursoCRUD
+from repository import UsuarioRepository, CursoRepository
 
 def insert_usuario(db):
     usuarios = (Usuario.Usuario(nome="Charles", email="charles@email.com"), Usuario.Usuario(nome="Samuel", email="samuel@email.com"), Usuario.Usuario(nome="Nicolas", email="nicolas@email.com"))
-    crud = UsuarioCRUD.UsuarioCRUD(db)
+    crud = UsuarioRepository.UsuarioRepository(db)
     for usuario in usuarios:
         crud.insert(nome=usuario.nome, email=usuario.email, ativo=True)    
     
@@ -16,7 +16,7 @@ def insert_usuario(db):
     return usuario
 
 def select_usuario_by_email(db) -> Usuario:
-    usuarioCRUD = UsuarioCRUD.UsuarioCRUD(db)
+    usuarioCRUD = UsuarioRepository.UsuarioRepository(db)
     usuario = usuarioCRUD.get_usuario_by_email(email="charles@email.com")
     
     print(f"Usuário {usuario.nome} - {usuario.id} selecionado pelo email com sucesso!")
@@ -24,7 +24,7 @@ def select_usuario_by_email(db) -> Usuario:
     return usuario
 
 def select_usuario(db) -> Usuario:
-    usuarioCRUD = UsuarioCRUD.UsuarioCRUD(db)
+    usuarioCRUD = UsuarioRepository.UsuarioRepository(db)
     usuario = usuarioCRUD.get_usuario_by_id(usuario_id=1)
     
     print(f"Usuário {usuario.nome} - {usuario.id} selecionado pelo email com sucesso!")
@@ -32,7 +32,7 @@ def select_usuario(db) -> Usuario:
     return usuario
 
 def update_usuario(db) :
-    usuarioCRUD = UsuarioCRUD.UsuarioCRUD(db)
+    usuarioCRUD = UsuarioRepository.UsuarioRepository(db)
     usuario = usuarioCRUD.get_usuario_by_id(usuario_id=1)
     usuario.nome = "Charles Teste"
     usuario = usuarioCRUD.update_usuario(usuario_id=usuario.id, nome=usuario.nome)
@@ -40,8 +40,8 @@ def update_usuario(db) :
     return usuario
 
 def update_usuario_curso(db) :
-    usuarioCRUD = UsuarioCRUD.UsuarioCRUD(db)
-    cursoCRUD = CursoCRUD.CursoCRUD(db)
+    usuarioCRUD = UsuarioRepository.UsuarioRepository(db)
+    cursoCRUD = CursoRepository.CursoRepository(db)
     usuario = usuarioCRUD.get_usuario_by_id(usuario_id=1)
     curso = cursoCRUD.insert("Curso de python avançado")
     usuario = usuarioCRUD.adicionar_curso_ao_usuario(usuario_id=usuario.id, curso_id=curso.id)
