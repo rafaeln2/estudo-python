@@ -1,0 +1,29 @@
+# Usa uma imagem base com Python
+FROM python:3.13-slim
+
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y curl build-essential
+
+# Instala o Poetry
+ENV POETRY_VERSION=1.8.2
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+
+# Cria diretório da aplicação
+WORKDIR /app
+
+# Copia os arquivos de dependências primeiro (boa prática pra cache)
+COPY pyproject.toml poetry.lock* ./
+
+# Instala dependências sem criar o virtualenv (usamos o Python global do container)
+RUN poetry config virtualenvs.create false \
+ && poetry install --no-interaction --no-ansi
+
+# Copia o restante da aplicação
+COPY . .
+
+# Expõe a porta (ajuste conforme sua aplicação)
+# EXPOSE 8000
+
+# Comando para rodar a aplicação (ajuste pra Flask, FastAPI, etc)
+CMD ["uvicorn", "controller.UsuarioController:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
