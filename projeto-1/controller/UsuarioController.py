@@ -5,6 +5,7 @@ from config.schemas import UsuarioCreate, UsuarioUpdate, UsuarioOut
 from models import Usuario, Curso, usuario_curso
 from repository import UsuarioRepository
 from typing import List
+from teste.UsuarioCRUDTest import criar_base
 
 app = FastAPI()
 
@@ -20,9 +21,10 @@ app = FastAPI()
 #     print("----------------------------------FIM GET_USUARIOS----------------------------------")
   
 #
-@app.get("/")  
+@app.get("/create")  
 def listar_usuarios():
-    return "-------------------------EndPoint Basico-------------------------"
+    criar_base()
+    return "-------------------------CRIANDO DATABASE-------------------------"
 
 @app.get("/usuarios", response_model=List[UsuarioOut])  
 def listar_usuarios(db: Session = Depends(get_db)):

@@ -4,6 +4,16 @@ from config.base import Base
 from models import Usuario, Curso, usuario_curso
 from repository import UsuarioRepository, CursoRepository
 
+def criar_base():
+    Base.metadata.create_all(bind=engine)
+    
+    db_gen = get_db()
+    db = next(db_gen)   
+    insert_usuario(db)
+    select_usuario_by_email(db)
+    update_usuario(db)
+    update_usuario_curso(db)
+
 def insert_usuario(db):
     usuarios = (Usuario.Usuario(nome="Charles", email="charles@email.com"), Usuario.Usuario(nome="Samuel", email="samuel@email.com"), Usuario.Usuario(nome="Nicolas", email="nicolas@email.com"))
     crud = UsuarioRepository.UsuarioRepository(db)
