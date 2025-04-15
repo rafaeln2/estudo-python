@@ -12,7 +12,7 @@ import os
 HOST="localhost" #"172.17.0.1" #localhost
 usuario = "postgres"
 senha = "1234"
-porta = "5432" #5432
+porta = "5400" #5432
 nome_banco = "meubanco" #estudo_db
-DATABASE_URL = os.environ.get("DATABASE_URL") #f"postgresql://{usuario}:{senha}@{HOST}:{porta}/{nome_banco}"
+DATABASE_URL = f"postgresql://{usuario}:{senha}@{HOST}:{porta}/{nome_banco}" #os.environ.get("DATABASE_URL") 
 engine = create_engine(DATABASE_URL, echo=True)

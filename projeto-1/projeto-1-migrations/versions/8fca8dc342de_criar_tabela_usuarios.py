@@ -29,7 +29,7 @@ def upgrade() -> None:
     #     sa.Column('email', sa.String, nullable=False),
     #     sa.Column('ativo', sa.Boolean, default=True),
     # )
-    print("true")
+    print("primeira migração passou")
 
 def downgrade() -> None:
     """Downgrade schema."""

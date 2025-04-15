@@ -4,6 +4,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from config.base import Base
+from config.engine import DATABASE_URL
 
 from alembic import context
 
@@ -31,6 +32,10 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+# Essa linha pega a URL da sua classe
+# config = context.config
+# config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 
 def run_migrations_offline() -> None:

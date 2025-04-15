@@ -21,6 +21,11 @@ router = APIRouter()
 #     print("----------------------------------FIM GET_USUARIOS----------------------------------")
   
 #
+#
+@router.get("/teste")  
+def listar_usuarios():
+    return {"descricao": "Usuario teste API"}
+
 @router.get("/create")  
 def listar_usuarios():
     criar_base()
