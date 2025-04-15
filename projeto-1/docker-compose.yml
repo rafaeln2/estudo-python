@@ -30,6 +30,7 @@ services:
       - db
     networks:
       - app-network
+    # entrypoint: /app/entrypoint.sh
 
 volumes:
   postgres_data:
