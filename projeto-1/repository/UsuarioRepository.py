@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.Usuario import Usuario
-from models.Curso import Curso
+import models.entities.Usuario 
+import models.entities.Curso
 
 class UsuarioRepository:
     def __init__(self, db: Session):

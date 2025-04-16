@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
 from config.session import get_db
-from config.schemas import UsuarioCreate, UsuarioUpdate, UsuarioOut
-from models import Usuario, Curso, usuario_curso
+from models.schemas.UsuarioSchemas import UsuarioCreate, UsuarioUpdate, UsuarioOut
+from models.entities import Usuario, Curso, usuario_curso
 from repository import UsuarioRepository
 from typing import List
 from teste.UsuarioCRUDTest import criar_base

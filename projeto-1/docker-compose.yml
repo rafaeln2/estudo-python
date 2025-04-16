@@ -15,22 +15,23 @@ services:
     networks:
       - app-network
 
-  # app:
-  #   build:
-  #     context: ./
-  #     dockerfile: dockerfile
-  #   container_name: app-python
-  #   ports:
-  #     - "5000:80"  # porta externa : porta do container (FastAPI roda na 80)
-  #   environment:
-  #     DATABASE_URL: postgresql://postgres:1234@db:5432/meubanco
-  #     DEBUG: "false"
-  #     LOG_FILE: /app/logs/app.log
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - app-network
-  #   # entrypoint: /app/entrypoint.sh
+
+  app:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    container_name: app-python
+    ports:
+      - "5000:80"  # porta externa : porta do container (FastAPI roda na 80)
+    environment:
+      DATABASE_URL: postgresql://postgres:1234@db:5432/meubanco
+      DEBUG: "false"
+      LOG_FILE: /app/logs/app.log
+    depends_on:
+      - db
+    networks:
+      - app-network
+    # entrypoint: /app/entrypoint.sh
 
 volumes:
   postgres_data:

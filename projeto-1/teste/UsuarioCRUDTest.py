@@ -1,7 +1,7 @@
 from config.session import get_db
 from config.engine import engine
 from config.base import Base
-from models import Usuario, Curso, usuario_curso
+from models.entities import Usuario, Curso, usuario_curso
 from repository import UsuarioRepository, CursoRepository
 
 def criar_base():
