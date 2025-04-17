@@ -9,6 +9,7 @@ async def print_data():
     for i in range(5):
         print(f"Printing data {i}...")
         await asyncio.sleep(1)
+    print("terminou print_data")
 async def main():
     task1 = asyncio.create_task(fetch_data())
     task2 = asyncio.create_task(print_data())
@@ -16,5 +17,6 @@ async def main():
     valor1 = await task1
     print(f"Valor 1: {valor1}")
     await task2
+    print("terminou main")
     # valor2 =
 asyncio.run(main())

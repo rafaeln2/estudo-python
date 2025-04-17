@@ -1,70 +1,86 @@
-from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 from config.session import get_db
 from models.schemas.UsuarioSchemas import UsuarioCreate, UsuarioUpdate, UsuarioOut
-from models.entities import Usuario, Curso, usuario_curso
 from repository import UsuarioRepository
 from typing import List
-from teste.UsuarioCRUDTest import criar_base
+from teste.UsuarioCRUDTest import criar_base,  insert_usuario, select_usuario_by_email, update_usuario, update_usuario_curso
 
 router = APIRouter()
 
-#TODO: Classe service para concentrar as validações e conexoes
-
-# GET, POST, PUT, DELETE
-# @app.get("/usuarios")
-# def get_usuarios():
-#     print("----------------------------------COMEÇO GET_USUARIOS----------------------------------")
-#     db_gen = get_db()        # cria o generator
-#     db = next(db_gen)        # pega a sessão (Session)
-#     crud = UsuarioRepository.UsuarioRepository(db)
-#     usuarios = crud.get_usuario_by_id(1);
-#     return usuarios
-#     print("----------------------------------FIM GET_USUARIOS----------------------------------")
-  
-#
-#
-@router.get("/teste")  
-async def listar_usuarios():
+# Endpoint de teste simples
+@router.get("/teste")
+async def teste():
     return {"descricao": "Curso teste API"}
 
-@router.get("/create")  
-async def listar_usuarios():
-    criar_base()
+# Criação da base
+@router.get("/createALL")
+async def criar_db(db: AsyncSession = Depends(get_db)):
+    print("entrou no inserts do teste")
+    try:
+        await insert_usuario(db)
+    except Exception as e:
+        print(f"Erro ao inserir usuário: {e}")
+    try:
+        await select_usuario_by_email(db)
+    except Exception as e:
+        print(f"Erro ao inserir usuário: {e}")
+    try:
+        await update_usuario(db)
+    except Exception as e:
+        print(f"Erro ao inserir usuário: {e}")
+    try:
+        await update_usuario_curso(db)
+    except Exception as e:
+        print(f"Erro ao inserir usuário: {e}")
+    
+    
+      # agora é async
     return "-------------------------CRIANDO DATABASE-------------------------"
 
-@router.get("/", response_model=List[UsuarioOut])  
-async def listar_usuarios(db: Session = Depends(get_db)):
-    return UsuarioRepository.UsuarioRepository(db).get_all_usuarios()
-    
+# Listar todos os usuários
+@router.get("/", response_model=List[UsuarioOut])
+async def listar_usuarios(db: AsyncSession = Depends(get_db)):
+    crud = UsuarioRepository.UsuarioRepository(db)
+    usuarios = await crud.get_all_usuarios()
+    return usuarios
+
+# Obter um usuário por ID
 @router.get("/{usuario_id}", response_model=UsuarioOut)
-async def obter_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = UsuarioRepository.UsuarioRepository(db).get_usuario_by_id(usuario_id)
+async def obter_usuario(usuario_id: int, db: AsyncSession = Depends(get_db)):
+    crud = UsuarioRepository.UsuarioRepository(db)
+    usuario = await crud.get_usuario_by_id(usuario_id)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return usuario
-    
-@router.post("/")
-async def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
+
+# Criar um novo usuário
+@router.post("/", response_model=UsuarioOut, status_code=status.HTTP_201_CREATED)
+async def criar_usuario(usuario: UsuarioCreate, db: AsyncSession = Depends(get_db)):
     usuario_dict = usuario.model_dump()
-    print(usuario_dict)
-    usuario_salvo = UsuarioRepository.UsuarioRepository(db).insert(usuario_dict["nome"], usuario_dict["email"], usuario_dict["ativo"])
+    crud = UsuarioRepository.UsuarioRepository(db)
+    usuario_salvo = await crud.insert(usuario_dict["nome"], usuario_dict["email"], usuario_dict["ativo"])
     return usuario_salvo
 
-@router.put("/{usuario_id}", response_model=UsuarioOut, status_code=status.HTTP_200_OK)
-async def atualizar_usuario(usuario_id: int, dados: UsuarioUpdate, db: Session = Depends(get_db)):
+# Atualizar um usuário existente
+@router.put("/{usuario_id}", response_model=UsuarioOut)
+async def atualizar_usuario(usuario_id: int, dados: UsuarioUpdate, db: AsyncSession = Depends(get_db)):
     crud = UsuarioRepository.UsuarioRepository(db)
-    usuario = crud.get_usuario_by_id(usuario_id)
+    usuario = await crud.get_usuario_by_id(usuario_id)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
     for key, value in dados.model_dump(exclude_unset=True).items():
         setattr(usuario, key, value)
-    usuario_atualizado = crud.update_usuario(usuario_id, usuario.nome, usuario.email, usuario.ativo)
-    return usuario_atualizado   
 
-@router.delete("/{usuario_id}", status_code=status.HTTP_200_OK)
-async def deletar_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = UsuarioRepository.UsuarioRepository(db).delete_usuario(usuario_id)
+    usuario_atualizado = await crud.update_usuario(usuario_id, usuario.nome, usuario.email, usuario.ativo)
+    return usuario_atualizado
+
+# Deletar um usuário
+@router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def deletar_usuario(usuario_id: int, db: AsyncSession = Depends(get_db)):
+    crud = UsuarioRepository.UsuarioRepository(db)
+    usuario = await crud.delete_usuario(usuario_id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return
-    
-    

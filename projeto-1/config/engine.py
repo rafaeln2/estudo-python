@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, text
+from sqlalchemy.ext.asyncio import create_async_engine
 import os
 
 
@@ -14,5 +15,5 @@ usuario = "postgres"
 senha = "1234"
 porta = "5400" #5432
 nome_banco = "meubanco" #estudo_db
-DATABASE_URL = f"postgresql://{usuario}:{senha}@{HOST}:{porta}/{nome_banco}" #os.environ.get("DATABASE_URL") 
-engine = create_engine(DATABASE_URL, echo=True)
+DATABASE_URL = f"postgresql+asyncpg://{usuario}:{senha}@{HOST}:{porta}/{nome_banco}" #os.environ.get("DATABASE_URL") 
+engine = create_async_engine(DATABASE_URL, echo=True)
