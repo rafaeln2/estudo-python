@@ -10,9 +10,9 @@ class Usuario(Base):
     nome : Mapped[str]= mapped_column(String, index=True, nullable=False)
     ativo: Mapped[bool] = mapped_column(Boolean, default=True)
     email: Mapped[str] = mapped_column(String, index=True)
-    
+    hashed_password : Mapped[str]= mapped_column(String, nullable=False)
     cursos: Mapped[list["Curso"]] = relationship(secondary="usuario_curso", back_populates="usuarios")
     
 
-    def __rep__r__(self):
-        return f"Usuario(id={self.id}, nome={self.nome}, ativo={self.ativo}, email={self.email})"
+    def __repr__(self):
+        return f"Usuario(id={self.id}, nome={self.nome}, ativo={self.ativo}, email={self.email}, senha={self.hashed_password})"

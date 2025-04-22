@@ -8,12 +8,17 @@ class UsuarioRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def insert(self, nome: str, email: str, ativo: bool = True):
-        usuario = Usuario(nome=nome, email=email, ativo=ativo)
+    async def insert(self, nome: str, email: str, hashed_password: str, ativo: bool = True):
+        usuario = Usuario(nome=nome, email=email, ativo=ativo, hashed_password=hashed_password)
         self.db.add(usuario)
         await self.db.commit()  # Commit deve ser assíncrono
         await self.db.refresh(usuario)  # Refresh também precisa ser aguardado
         return usuario
+    
+    async def get_usuario_by_nome(self, nome: str) -> Usuario | None:
+        result = await self.db.execute(select(Usuario).filter(Usuario.nome == nome))
+        print(result)
+        return result.scalars().first()
 
     async def get_usuario_by_id(self, usuario_id: int):
         result = await self.db.execute(select(Usuario).filter(Usuario.id == usuario_id))
