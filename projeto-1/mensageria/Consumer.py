@@ -1,16 +1,8 @@
 import pika
 
 class RabbitmqConsumer:
-    def __init__(self, host, port, username, password, queue_name, callback):
-        self.__host = host
-        self.__port = port
-        self.__username = username
-        self.__password = password
-        self.__queue_name = queue_name
-        self.__callback = callback
-        self.__channel = self.__create_channel()
     def __init__(self, callback):
-        self.__host = 'localhost'
+        self.__host = 'rabbitmq'
         self.__port = 5672
         self.__username = 'guest'
         self.__password = 'guest'
