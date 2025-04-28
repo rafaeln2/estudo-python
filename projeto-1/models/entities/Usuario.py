@@ -1,7 +1,6 @@
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Mapped, mapped_column
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from config.base import Base
-from pydantic import BaseModel
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -12,6 +11,7 @@ class Usuario(Base):
     email: Mapped[str] = mapped_column(String, index=True)
     hashed_password : Mapped[str]= mapped_column(String, nullable=False)
     cursos: Mapped[list["Curso"]] = relationship(secondary="usuario_curso", back_populates="usuarios")
+    enderecos: Mapped[int] = relationship('Viacep', back_populates='usuarios')
     
 
     def __repr__(self):

@@ -13,18 +13,13 @@ import csv
 import random
 import requests
 import httpx
+from mensageria import Consumer, Publisher
+import pika
 from io import StringIO
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 router_publico = APIRouter()
-
-# @router_publico("/csv_upload", status_code=status.HTTP_201_CREATED)
-# async def upload_csv(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
-#     try:
-#         # Lê o arquivo CSV
-#         csv_content = await file.read()
-#         csv_lines = csv_content.
-
+            
 @router_publico.get("/csv_read")
 def read_csv():
     with open('off 200.csv', 'r') as file: # with é um alternativa pra um try finally pra abrir e fechar o reader
@@ -58,7 +53,6 @@ async def write_csv():
                 response = requests.get(via_cep_url.format(row[0].replace('-', '')))
                 endereco = response.json()
                 if response.status_code == 200 and "erro" not in endereco:
-                    endereco = response.json()
                     csv_writer.writerow([row[0], endereco['uf'], endereco['bairro'], endereco['logradouro']])
                 else:
                     print(f"Erro ao buscar dados do CEP {row[0]}: {response.status_code}")

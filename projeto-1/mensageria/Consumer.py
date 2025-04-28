@@ -32,7 +32,7 @@ class RabbitmqConsumer:
         )
         return channel
     
-    def start(self,) -> None:   
+    def start(self) -> None:   
         print("Esperando mensagens...")
         self.__channel.start_consuming()
         
