@@ -17,7 +17,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    hostname: rabbitmq-host
     container_name: rabbitmq
     ports:
       - "5672:5672"     # Porta padrão para aplicações
@@ -35,6 +34,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    depends_on:
+      - db
   app:
     build:
       context: ./
@@ -57,6 +58,18 @@ services:
     networks:
       - app-network
     # entrypoint: /app/entrypoint.sh
+
+  celery_worker:
+    build: ./
+    volumes:
+        - .:/app
+    command: celery -A controller.CeleryWorker worker --loglevel=info
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - app-network
+    # network_mode: host
 
 volumes:
   postgres_data:

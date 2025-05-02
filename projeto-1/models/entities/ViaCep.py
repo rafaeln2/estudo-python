@@ -13,7 +13,8 @@
     #   "ddd": "11",
     #   "siafi": "7107"
     # }
-    
+
+from __future__ import annotations    
 from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
 
@@ -23,28 +24,40 @@ class ViaCep(Base):
     __tablename__ = 'viacep'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    cep: Mapped[str] = mapped_column(String(8), unique=True, index=True, nullable=False)
+    cep: Mapped[str] = mapped_column(String(10), unique=True, index=True, nullable=False)
     logradouro: Mapped[str] = mapped_column(String(255))
     complemento: Mapped[str] = mapped_column(String(255))
+    unidade: Mapped[str] = mapped_column(String(255))
     bairro: Mapped[str] = mapped_column(String(255))
     localidade: Mapped[str] = mapped_column(String(255))
     uf: Mapped[str] = mapped_column(String(2))
+    estado: Mapped[str] = mapped_column(String(255))
+    regiao: Mapped[str] = mapped_column(String(255))
     ibge: Mapped[str] = mapped_column(String(10))
     gia: Mapped[str] = mapped_column(String(10))
     ddd: Mapped[str] = mapped_column(String(3))
     siafi: Mapped[str] = mapped_column(String(10))
-    usuario_id: Mapped[int] = mapped_column(Integer, ForeignKey('usuarios.id'))
+    
+    # CHAVE ESTRANGEIRA
+    # usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
 
-    def __init__(self, cep: str, logradouro=None, complemento=None, bairro=None,
-                 localidade=None, uf=None, ibge=None, gia=None, ddd=None, siafi=None, usuario_id=None):
+    # RELAÇÃO MANY TO ONE
+    # usuario: Mapped["Usuario"] = relationship("Usuario", back_populates="enderecos")
+
+
+    def __init__(self, cep: str, logradouro=None, complemento=None, unidade=None, bairro=None,
+                 localidade=None, uf=None, estado = None, regiao = None, ibge=None, gia=None, ddd=None, siafi=None, usuario=None):
         self.cep = cep
         self.logradouro = logradouro
         self.complemento = complemento
+        self.unidade = unidade
         self.bairro = bairro
         self.localidade = localidade
         self.uf = uf
+        self.estado = estado
+        self.regiao = regiao
         self.ibge = ibge
         self.gia = gia
         self.ddd = ddd
         self.siafi = siafi
-        self.usuario_id = usuario_id
+        self.usuario = usuario

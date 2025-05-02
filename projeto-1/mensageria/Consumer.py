@@ -6,7 +6,7 @@ class RabbitmqConsumer:
         self.__port = 5672
         self.__username = 'guest'
         self.__password = 'guest'
-        self.__queue_name = 'demo-queue'
+        self.__queue_name = 'celery' #demo-queue
         self.__callback = callback
         self.__channel = self.__create_channel()
         

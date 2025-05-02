@@ -8,8 +8,8 @@ class RabbitmqPublisher:
         self.__port = 5672
         self.__username = 'guest'
         self.__password = 'guest'
-        self.__exchange = "demo-exchange-fanout"
-        self.__routing_key = ""
+        self.__exchange = "celery"
+        self.__routing_key = "celery"
         self.__channel = self.__create_channel()
     
     def __create_channel(self):

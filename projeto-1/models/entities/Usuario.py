@@ -1,6 +1,8 @@
+from __future__ import annotations
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Mapped, mapped_column
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from config.base import Base
+from models.entities.usuario_curso import usuario_curso
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -11,8 +13,8 @@ class Usuario(Base):
     email: Mapped[str] = mapped_column(String, index=True)
     hashed_password : Mapped[str]= mapped_column(String, nullable=False)
     cursos: Mapped[list["Curso"]] = relationship(secondary="usuario_curso", back_populates="usuarios")
-    enderecos: Mapped[int] = relationship('Viacep', back_populates='usuarios')
     
+    # enderecos: Mapped[list["ViaCep"]] = relationship("ViaCep", back_populates="usuario")  
 
     def __repr__(self):
         return f"Usuario(id={self.id}, nome={self.nome}, ativo={self.ativo}, email={self.email}, senha={self.hashed_password})"

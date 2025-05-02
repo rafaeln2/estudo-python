@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update, delete
-from models.entities import ViaCep
+from models.entities.ViaCep import ViaCep
 
 class ViacepRepository:
     def __init__(self, db: AsyncSession):
