@@ -71,6 +71,19 @@ services:
       - app-network
     # network_mode: host
 
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+
+
 volumes:
   postgres_data:
   rabbitmq_data:
