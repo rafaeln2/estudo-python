@@ -38,10 +38,6 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
 
 @router.post("/", response_model=usuario_schemas.UsuarioOut)
 async def create_user(usuario_create_req: usuario_schemas.UsuarioCreate, db: AsyncSession = Depends(get_db)) -> usuario_schemas.UsuarioOut:
-    # usuario = Usuario(
-    #     nome = usuario_create_req.nome, 
-    #     email = usuario_create_req.email, 
-    #     hashed_password = bcrpyt_context.hash(secret=usuario_create_req.senha))
     repo = UsuarioRepository(db)
     new_usuario = await repo.insert(nome = usuario_create_req.nome, 
         email = usuario_create_req.email, 

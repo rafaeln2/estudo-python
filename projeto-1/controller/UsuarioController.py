@@ -56,7 +56,6 @@ async def write_csv():
                     csv_writer.writerow([row[0], endereco['uf'], endereco['bairro'], endereco['logradouro']])
                 else:
                     print(f"Erro ao buscar dados do CEP {row[0]}: {response.status_code}")
-
                 
 @router_publico.post("/enderecos-upload")
 async def write_imported_csv(file: UploadFile = File(...)):
