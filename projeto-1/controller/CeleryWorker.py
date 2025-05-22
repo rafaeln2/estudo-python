@@ -81,7 +81,7 @@ def processar_cep_BrasilApiCep(cep):
             else:
                 print(f"Erro ao buscar dados do CEP {cep}: {response.status_code} - {endereco.get('erro', 'Desconhecido')}")
         except requests.Timeout:
-            print(f"Erro: Timeout ao tentar acessar o BrasilAPI para o CEP {cep}.")
+            print(f"Erro: Timeout ao tentar acessar o BrasilAPI para o CEP {cep} =.")
         except requests.RequestException as exc:
             print(f"Erro ao acessar o BrasilAPI para o CEP {cep}: {str(exc)}")
         except Exception as e:

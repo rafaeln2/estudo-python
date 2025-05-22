@@ -17,7 +17,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: rabbitmq-projeto-1
     ports:
       - "5672:5672"     # Porta padrão para aplicações
       - "15672:15672"   # Interface web de gerenciamento
