@@ -9,8 +9,16 @@ redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 channel = get_rabbitmq_channel()
 
 def run_consumer_processar_disponibilidade():
-    channel.basic_consume(queue='service_monitor', on_message_callback=processar_disponibilidade)
-    channel.start_consuming()
+    print("Iniciando consumo...")
+    while True:
+        method_frame, properties, body = channel.basic_get(queue='service_monitor', auto_ack=False)
+
+        if method_frame:
+            processar_disponibilidade(channel, method_frame, properties, body)
+        else:
+            print("Fila vazia. Encerrando consumidor.")
+            break
+    
     
 def processar_disponibilidade(ch, method, properties, body):
     try:
