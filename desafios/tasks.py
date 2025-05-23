@@ -1,28 +1,35 @@
-from celery import Celery
+import json
+import pika
 import redis
-from fastapi import Depends, File
 import time
+from config import get_rabbitmq_channel
 
 redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
-celery_app = Celery(main='desafio', broker="amqp://guest:guest@rabbitmq:5672/")
-celery_app.conf.task_routes = {
-    "tasks.processar_disponibilidade": {"queue": "service_monitor"},
-}
 
-@celery_app.task()
-def processar_disponibilidade(json):
-    print(f"JSON: {json}")
-    timestamp = int(time.time())
-    status_code = json.get("status_code")
-    latency_ms = json.get("latency_ms")
-    url = json.get("url")
+channel = get_rabbitmq_channel()
+
+def run_consumer_processar_disponibilidade():
+    channel.basic_consume(queue='service_monitor', on_message_callback=processar_disponibilidade)
+    channel.start_consuming()
     
-    redis_client.zadd("latencies", {url: latency_ms})
-    # Se for erro (status >= 400), registra no Sorted Set de erros com o timestamp   
-    if status_code >= 400:
-        redis_client.zadd("errors", {url: timestamp})
-        print(f"URL: {url}, Status code: {status_code}, json = {json}")
-    else:
-        print(f"URL: {url}, Status code: {status_code}, json = {json}")
-    
-    
+def processar_disponibilidade(ch, method, properties, body):
+    try:
+        json_data = json.loads(body)        
+        timestamp = int(time.time())
+        status_code = json_data.get("status_code")
+        latency_ms = json_data.get("latency_ms")
+        url = json_data.get("url")
+        
+        redis_client.zadd("latencies", {url: latency_ms})
+        # Se for erro (status >= 400), registra no Sorted Set de erros com o timestamp   
+        if status_code >= 400:
+            redis_client.zadd("errors", {url: timestamp})
+            print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
+        else:
+            print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
+        channel.basic_ack(delivery_tag=method.delivery_tag)
+        
+    except Exception as e:
+        print(f"Erro ao processar mensagem: {e}")
+        channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)  # descarta
+
