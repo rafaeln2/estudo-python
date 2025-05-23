@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:  
+    build:
+      context: ./
+      dockerfile: dockerfile
+    container_name: app-python-desafios
+    ports:
+      - "5000:80" 
+    environment:
+      DATABASE_URL: postgresql://postgres:1234@db:5432/meubanco
+      DEBUG: "false"
+      LOG_FILE: /app/logs/app.log
+      PYTHONUNBUFFERED: "1"
+    tty: true
+    stdin_open: true
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-desafios
+    ports:
+      - "5672:5672"     # Porta padrão para aplicações
+      - "15672:15672"   # Interface web de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
+    restart: unless-stopped
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:latest
+    container_name: redis-desafios
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+volumes:
+  # postgres_data:
+  rabbitmq_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
+  

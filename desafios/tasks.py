@@ -32,8 +32,9 @@ def processar_disponibilidade(ch, method, properties, body):
 
         # Se for erro (status >= 400), registra a url e a hora
         if status_code >= 400:
-            redis_client.zadd("errors", {url: timestamp})
-            print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
+            error_key = f"errors:{url}"
+            redis_client.lpush(error_key, timestamp)
+            redis_client.ltrim(error_key, 0, 9)  # Mantém só os 10 erros mais recentes
         else:
             print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
 
