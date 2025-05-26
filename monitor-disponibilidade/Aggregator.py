@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 # Conecta ao Redis
-from tasks import redis_client as r
+from Tasks import redis_client as r
 
 import time
 
@@ -11,19 +11,18 @@ def aggregator_latencias_erros():
     print("URLs mais lentas (top 5):")
 
     latency_data = []
-    for key in r.scan_iter("latencies:*"):
-        url = key.decode().split("latencies:")[1]
-
-        # Pega os valores da lista de latência (convertendo para float)
-        latencies = r.lrange(key, 0, -1)
-        latencies = [float(l.decode()) for l in latencies]
+    for key in r.scan_iter("latencies:*"): # percorre todos as chaves que começa com latencies:
+        url = key.decode().split("latencies:")[1] # pega a url da chave
+        
+        latencies = r.lrange(key, 0, -1) # pega a lista completa de latencia pela chave
+        latencies = [float(l.decode()) for l in latencies] # pega as latencias
 
         if latencies:
-            avg_latency = sum(latencies) / len(latencies)
-            latency_data.append((url, avg_latency))
+            avg_latency = sum(latencies) / len(latencies) # divide a soma das latencias pelo numero de latencia (média)
+            latency_data.append((url, avg_latency)) #adiciona na lista de latencias
 
     # Ordena por média de latência decrescente
-    top_latencies = sorted(latency_data, key=lambda x: x[1], reverse=True)[:5]
+    top_latencies = sorted(latency_data, key=lambda x: x[1], reverse=True)[:5] # ordena de maior pra menor e pega as 5 primeiras
 
     for i, (url, latency) in enumerate(top_latencies, 1):
         print(f"{i}. {url} ({latency:.3f} ms)")
@@ -34,10 +33,9 @@ def aggregator_latencias_erros():
     total_erros = 0
 
     for key in r.scan_iter("errors:*"):
-        timestamps = r.lrange(key, 0, -1)
-        # Converte e filtra os timestamps dentro das últimas 24h
-        erros_recent = [float(ts.decode()) for ts in timestamps if float(ts.decode()) >= past_24h]
-        total_erros += len(erros_recent)
+        timestamps = r.lrange(key, 0, -1) # pega todas as timestamp pela chave
+        erros_recent = [float(ts.decode()) for ts in timestamps if float(ts.decode()) >= past_24h] # itera as timestamps e coloca numa lista se forem no periodo de 24 horas
+        total_erros += len(erros_recent) # soma a quantidade de erros
 
     print(f"Total de erros nas últimas 24 horas: {total_erros}")
 

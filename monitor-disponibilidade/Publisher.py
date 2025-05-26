@@ -41,13 +41,13 @@ def verifica_disponibilidade():
                         delivery_mode=2
                     )
                 )
-                print("finalizado envio de mensagem!")
-            except requests.Timeout:
+            except requests.Timeout: #mandar pro rbmq
                 print(f"Erro: Timeout para o site {site}.")
             except requests.RequestException as exc:
                 print(f"Erro ao acessar o {site}: {str(exc)}")
             except Exception as e:
                 print(f"Erro desconhecido {site}: {str(e)}")
+        print("finalizado envio de mensagem!")
     except Exception as e:
         print(f"Erro publisher: {e}")
         
