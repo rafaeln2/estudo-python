@@ -48,11 +48,11 @@ def mostrar_resumo_por_url():
     for key in r.scan_iter("latencies:*"):
         url = key.decode().split("latencies:")[1]
 
-        # Pega latências (lista de até 10)
+        # Pega as latências
         latencies_raw = r.lrange(key, 0, -1)
         latencies = [float(l.decode()) for l in latencies_raw]
 
-        # Busca erros específicos por url
+        # Busca erros por url
         error_key = f"errors:{url}"
         error_timestamps = r.lrange(error_key, 0, -1)
         error_times = [float(ts.decode()) for ts in error_timestamps]
