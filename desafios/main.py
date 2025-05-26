@@ -12,6 +12,7 @@ def job():
 def main():
     schedule.every(60).seconds.do(job)
     schedule.every(90).seconds.do(aggregator_latencias_erros)
+    schedule.every(90).seconds.do(mostrar_resumo_por_url)
 
     while True:
         schedule.run_pending()

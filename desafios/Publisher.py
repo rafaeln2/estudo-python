@@ -11,6 +11,7 @@ import json
 from config import get_rabbitmq_channel
 
 router = APIRouter()
+
 # Puxa do env a lista de sites para fazer as requisições e manda a url, status_code e latency pro rmq
 def verifica_disponibilidade():
     try:

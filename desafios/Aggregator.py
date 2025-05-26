@@ -48,17 +48,19 @@ def mostrar_resumo_por_url():
     for key in r.scan_iter("latencies:*"):
         url = key.decode().split("latencies:")[1]
 
-        # Pega a lista de latências (mais recentes primeiro)
+        # Pega latências (lista de até 10)
         latencies_raw = r.lrange(key, 0, -1)
         latencies = [float(l.decode()) for l in latencies_raw]
 
-        # Conta erros nas últimas 24h para essa URL
-        error_count = r.zcount("errors", past_24h, now)
-        # Filtra apenas os que têm o nome da URL
-        url_errors = [member for member in r.zrangebyscore("errors", past_24h, now, withscores=False) if member.decode() == url]
-        url_error_count = len(url_errors)
+        # Busca erros específicos por url
+        error_key = f"errors:{url}"
+        error_timestamps = r.lrange(error_key, 0, -1)
+        error_times = [float(ts.decode()) for ts in error_timestamps]
+        recent_errors = [ts for ts in error_times if ts >= past_24h]
 
         print(f"URL: {url}")
         print(f"  Latências: {latencies}")
-        print(f"  Erros nas últimas 24h: {url_error_count}")
+        print(f"  Erros nas últimas 24h: {len(recent_errors)}")
         print("-" * 40)
+
+        

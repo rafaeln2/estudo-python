@@ -22,7 +22,7 @@ def processar_disponibilidade(ch, method, properties, body):
     try:
         json_data = json.loads(body)
         timestamp = int(time.time())
-        status_code = json_data.get("status_code")
+        status_code = int(json_data.get("status_code"))
         latency_ms = json_data.get("latency_ms")
         url = json_data.get("url")
 
@@ -32,9 +32,10 @@ def processar_disponibilidade(ch, method, properties, body):
 
         # Se for erro (status >= 400), registra a url e a hora
         if status_code >= 400:
-            error_key = f"errors:{url}"
+            error_key = f"errors:{url}"            
             redis_client.lpush(error_key, timestamp)
             redis_client.ltrim(error_key, 0, 9)  # Mantém só os 10 erros mais recentes
+            print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
         else:
             print(f"URL: {url}, Status code: {status_code}, json = {json_data}")
 
@@ -42,6 +43,6 @@ def processar_disponibilidade(ch, method, properties, body):
 
     except Exception as e:
         print(f"Erro ao processar mensagem: {e}")
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)  # descarta
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
 
