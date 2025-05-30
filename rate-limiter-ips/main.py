@@ -13,7 +13,7 @@ def main():
     schedule.every(1).seconds.do(job)
     schedule.every(10).seconds.do(aggregator_latencias_erros)
     # schedule.every(90).seconds.do(mostrar_resumo_por_url)
-
+    ##
     while True:
         schedule.run_pending()
         time.sleep(5)
