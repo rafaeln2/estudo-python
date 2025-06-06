@@ -3,7 +3,7 @@ import random
 import time
 from fastapi import APIRouter
 import requests
-from Aggregator import aggregator_latencias_erros
+from Aggregator import print_estatisticas
 from dotenv import load_dotenv
 load_dotenv()
 

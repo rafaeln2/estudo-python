@@ -4,13 +4,19 @@ import redis
 import time
 from datetime import datetime
 
-# Conecta ao Redis
 from Tasks import redis_client as r
 
-import time
-
 # lista todos os aceitas e rejeitadas por IP
-def aggregator_latencias_erros():
+def print_estatisticas():
+    stats = prepara_dados_estatisticas()
+
+    # Mostra resultado
+    print("\n📊 Snapshot de Requisições por IP:")
+    for ip, contagem in stats.items():
+        print(f"IP {ip} - Aceitas: {contagem['aceitas']}, Rejeitadas: {contagem['rejeitadas']}")
+    print("-" * 40)
+
+def prepara_dados_estatisticas():
     stats = defaultdict(lambda: {"aceitas": 0, "rejeitadas": 0})
 
     # Pega todas as requisições da fila de aceitos
@@ -32,9 +38,4 @@ def aggregator_latencias_erros():
             stats[ip]["rejeitadas"] += 1
         except Exception as e:
             print("Erro ao ler rejeitadas:", e)
-
-    # Mostra resultado
-    print("\n📊 Snapshot de Requisições por IP:")
-    for ip, contagem in stats.items():
-        print(f"IP {ip} - Aceitas: {contagem['aceitas']}, Rejeitadas: {contagem['rejeitadas']}")
-    print("-" * 40)
+    return stats
