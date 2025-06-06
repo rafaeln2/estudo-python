@@ -1,19 +1,24 @@
-import datetime
+from datetime import datetime
 import os
 import random
 import time
+from fastapi import APIRouter
 import requests
-from Aggregator import aggregator_latencias_erros
-import time
-import pika
+from Aggregator import print_estatisticas
+from dotenv import load_dotenv
+load_dotenv()
 
+import pika
 import json
 from config import get_rabbitmq_channel
+
+router = APIRouter()
 
 ips = [
     "192.168.1.10",
     "10.0.0.25",
-    "172.16.0.42"
+    "10.0.0.25",
+    # "172.16.0.42"
     # "203.0.113.7",
     # "8.8.8.8"
     # "198.51.100.23",
@@ -29,7 +34,7 @@ endpoints = [
 ]
 
 
-def envia_dados_requisicoes():
+def verifica_disponibilidade():
     try:        
         channel = get_rabbitmq_channel()
         for ip in ips:            
@@ -37,7 +42,7 @@ def envia_dados_requisicoes():
                 json_data = {
                     "ip": ip,
                     "endpoint": endpoints[0], #random.choice(endpoints)
-                    "timestamp": datetime.datetime.now().isoformat()
+                    "timestamp": datetime.now().isoformat()
                 }
                 
                 print("enviando mensagem pro rabbitmq...")
