@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:latest
+    container_name: postgres-rl
+    environment:
+      POSTGRES_DB: db-rl
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5400:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
   app:  
     build:
       context: ./
@@ -9,6 +23,7 @@ services:
     ports:
       - "5000:80" 
     environment:
+      DATABASE_URL: postgresql://postgres:1234@db:5432/meubanco
       DEBUG: "false"
       LOG_FILE: /app/logs/app.log
       PYTHONUNBUFFERED: "1"
@@ -17,6 +32,9 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      db:
+        condition: service_started
+
     networks:
       - app-network
   rabbitmq:
@@ -49,7 +67,7 @@ services:
       - app-network
     restart: unless-stopped
 volumes:
-  # postgres_data:
+  postgres_data:
   rabbitmq_data:
   redis_data:
 

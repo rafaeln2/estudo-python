@@ -3,6 +3,7 @@ import pika
 import redis
 import time
 from config import get_rabbitmq_channel
+from DatabaseConnection import registrar_log
 
 redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 
@@ -26,7 +27,8 @@ def processar_limites_de_acesso(ch, method, properties, body):
     try:
         json_data = json.loads(body)
         ip = json_data.get("ip")
-        endpoint = json_data.get("endpoint")        
+        endpoint = json_data.get("endpoint")     
+        timestamp = json_data.get("timestamp")   
 
         rate_limiter_key = f"rl:{ip}:{endpoint}" # prepara chave da fila de taxa de limite
         
@@ -42,8 +44,7 @@ def processar_limites_de_acesso(ch, method, properties, body):
             chave_rejeitados = "fila:rejeitados"
             json_id_endpoint = json.dumps({"ip": ip, "endpoint": endpoint})
             
-            redis_client.rpush(chave_rejeitados, json_id_endpoint)
-            redis_client.ltrim(chave_rejeitados, -1000, -1)
+            registrar_log(ip, endpoint, False, timestamp)
             
             print(f"[REJEITADO] {ip} {endpoint} ({qntd_acessos})")
         else:
@@ -51,8 +52,7 @@ def processar_limites_de_acesso(ch, method, properties, body):
             chave_aceitos = "fila:aceitos"
             json_id_endpoint = json.dumps({"ip": ip, "endpoint": endpoint})
             
-            redis_client.rpush(chave_aceitos, json_id_endpoint)
-            redis_client.ltrim(chave_aceitos, -1000, -1)
+            registrar_log(ip, endpoint, True, timestamp)
             
             print(f"[ACEITO] {ip} {endpoint} ({qntd_acessos})")
 

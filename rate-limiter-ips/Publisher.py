@@ -1,17 +1,14 @@
+import datetime
 import os
 import random
 import time
-from fastapi import APIRouter
 import requests
 from Aggregator import aggregator_latencias_erros
-from dotenv import load_dotenv
-load_dotenv()
-
+import time
 import pika
+
 import json
 from config import get_rabbitmq_channel
-
-router = APIRouter()
 
 ips = [
     "192.168.1.10",
@@ -39,7 +36,8 @@ def envia_dados_requisicoes():
             try:                            
                 json_data = {
                     "ip": ip,
-                    "endpoint": endpoints[0] #random.choice(endpoints)
+                    "endpoint": endpoints[0], #random.choice(endpoints)
+                    "timestamp": datetime.datetime.now().isoformat()
                 }
                 
                 print("enviando mensagem pro rabbitmq...")

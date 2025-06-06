@@ -3,6 +3,7 @@ import json
 import redis
 import time
 from datetime import datetime
+from DatabaseConnection import buscar_logs_aceitos, buscar_logs_rejeitados
 
 # Conecta ao Redis
 from Tasks import redis_client as r
@@ -14,21 +15,19 @@ def aggregator_latencias_erros():
     stats = defaultdict(lambda: {"aceitas": 0, "rejeitadas": 0})
 
     # Pega todas as requisições da fila de aceitos
-    aceitas = r.lrange("fila:aceitos", 0, -1)
+    aceitas = buscar_logs_aceitos()
     for item in aceitas:
         try:
-            item_json = json.loads(item)
-            ip = item_json.get("ip")
+            ip = item[1]
             stats[ip]["aceitas"] += 1
         except Exception as e:
             print("Erro ao ler aceitos:", e)
 
     # Pega todas as requisições rejeitadas
-    rejeitadas = r.lrange("fila:rejeitados", 0, -1)
+    rejeitadas = buscar_logs_rejeitados()
     for item in rejeitadas:
-        try:
-            item_json = json.loads(item)
-            ip = item_json.get("ip")
+        try:            
+            ip = item[1]
             stats[ip]["rejeitadas"] += 1
         except Exception as e:
             print("Erro ao ler rejeitadas:", e)
