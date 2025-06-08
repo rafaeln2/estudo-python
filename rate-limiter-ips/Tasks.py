@@ -40,20 +40,12 @@ def processar_limites_de_acesso(ch, method, properties, body):
 
         # se a qntd de acessos for maior que o limite
         if qntd_acessos > RATE_LIMIT:
-            # excedeu o limite — envia para fila "rejeitados"
-            chave_rejeitados = "fila:rejeitados"
-            json_id_endpoint = json.dumps({"ip": ip, "endpoint": endpoint})
-            
-            registrar_log(ip, endpoint, False, timestamp)
-            
+            # excedeu o limite — envia para fila "rejeitados"            
+            registrar_log(ip, endpoint, False, timestamp)            
             print(f"[REJEITADO] {ip} {endpoint} ({qntd_acessos})")
         else:
             # ainda dentro do limite — envia para fila "aceitos"
-            chave_aceitos = "fila:aceitos"
-            json_id_endpoint = json.dumps({"ip": ip, "endpoint": endpoint})
-            
-            registrar_log(ip, endpoint, True, timestamp)
-            
+            registrar_log(ip, endpoint, True, timestamp)            
             print(f"[ACEITO] {ip} {endpoint} ({qntd_acessos})")
 
         ch.basic_ack(delivery_tag=method.delivery_tag)

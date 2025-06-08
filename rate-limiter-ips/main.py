@@ -1,5 +1,7 @@
 # main.py
 import time
+
+from fastapi import FastAPI
 from Publisher import verifica_disponibilidade
 from Tasks import run_consumer_processar_limites_de_acesso
 from Aggregator import print_estatisticas

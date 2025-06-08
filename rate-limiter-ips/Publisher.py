@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import random
 import time
+from zoneinfo import ZoneInfo
 from fastapi import APIRouter
 import requests
 from Aggregator import print_estatisticas
@@ -33,7 +34,6 @@ endpoints = [
     "/projetos/cadastro"
 ]
 
-
 def verifica_disponibilidade():
     try:        
         channel = get_rabbitmq_channel()
@@ -42,7 +42,7 @@ def verifica_disponibilidade():
                 json_data = {
                     "ip": ip,
                     "endpoint": endpoints[0], #random.choice(endpoints)
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": datetime.now(ZoneInfo('America/Sao_Paulo')).isoformat()
                 }
                 
                 print("enviando mensagem pro rabbitmq...")
